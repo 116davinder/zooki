@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-# usage: python3 zooki.py /zookeeper /zookeeper/zookeeper-logs/metric.out
+# usage: python3 zooki.py /zookeeper /zookeeper/zookeeper-logs/
 
-# This script is suppose to export all zookeeper metric from one node and write to file
-# from where splunk like tools can read it.
+# This script suppose to export all zookeeper metric from one node and write to file
+# from where either splunk like tools can read it.
 
 from urllib import request
 import shutil
@@ -31,23 +31,23 @@ class zooki:
 
     def getZMetric(self, commandPath):
         with request.urlopen( self.zHttpAddr + commandPath ) as f:
-            _szMetric = json.loads(f.read().decode('utf-8'))
-            _szMetric["@timestamp"] = self.cTimeNow
-        # print(json.dumps(_szMetric))
-        return json.dumps(_szMetric)
+            _zMetric = json.loads(f.read().decode('utf-8'))
+            _zMetric["@timestamp"] = self.cTimeNow
+        # print(json.dumps(_zMetric))
+        return json.dumps(_zMetric)
 
 def main():
 
     commandPaths = ['connections', 'dump', 'leader', 'monitor',
-                    'observers', 'ruok', 'server_stats',
-                    'voting_view', 'watch_summary', 'watches_by_path',
-                    'zabstate']
+                    'observers', 'server_stats', 'watches_by_path',
+                    'voting_view', 'watch_summary', 'zabstate', 'rouk']
 
-    with open(sys.argv[2], "w") as zMetricFile:
-        z = zooki()
+    z = zooki()
+    with open(sys.argv[2] + "disk.out", "w") as zMetricFile:
         zMetricFile.write(z.getStorageMetric())
-        for c in commandPaths:
-            zMetricFile.write("\n")
-            zMetricFile.write(z.getZMetric(c))
+
+    for command in commandPaths:
+        with open(sys.argv[2] + command + ".out", "w") as zMetricFile:
+            zMetricFile.write(z.getZMetric(command))
 
 main()
