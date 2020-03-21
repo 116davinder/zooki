@@ -2,8 +2,8 @@
 
 # usage: python3 zooki.py /zookeeper /zookeeper/zookeeper-logs/metric.out
 
-# This script suppose to export all zookeeper metric from one node and write to file
-# from where either splunk like tools can read it.
+# This script is suppose to export all zookeeper metric from one node and write to file
+# from where splunk like tools can read it.
 
 from urllib import request
 import shutil
